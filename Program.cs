@@ -12,6 +12,15 @@ builder.Services.AddHttpClient<IAuthService, AuthService>(client =>
     client.BaseAddress = new Uri(builder.Configuration["ApiBaseUrl"]!);
 });
 
+// Register the new AssetService
+builder.Services.AddHttpClient<IAssetService, AssetService>(client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["ApiBaseUrl"]!);
+});
+
+// Add HttpContextAccessor to access session state
+builder.Services.AddHttpContextAccessor();
+
 // Add session services to the container.
 builder.Services.AddSession(options =>
 {
@@ -19,8 +28,6 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
-
-
 
 var app = builder.Build();
 

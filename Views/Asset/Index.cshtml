@@ -1,0 +1,39 @@
+﻿@model IEnumerable<AssetManagement.Web.Models.AssetViewModel>
+
+@{
+    ViewData["Title"] = "Asset List";
+}
+
+<h1>Asset List</h1>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Asset ID</th>
+            <th>Asset Name</th>
+            <th>Category</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.AssetName</td>
+                    <td>@item.Category</td>
+                    <td>@item.Status</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4" class="text-center">No assets found.</td>
+            </tr>
+        }
+    </tbody>
+</table>

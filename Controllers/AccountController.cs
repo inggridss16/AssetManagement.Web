@@ -39,7 +39,8 @@ namespace AssetManagement.Web.Controllers
                         // Upon successful login, store the token in the session.
                         HttpContext.Session.SetString("JWToken", token);
 
-                        return RedirectToAction("Index", "Home");
+                        // Redirect to the Asset List page
+                        return RedirectToAction("Index", "Asset");
                     }
                     else
                     {
