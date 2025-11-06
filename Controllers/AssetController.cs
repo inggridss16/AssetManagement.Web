@@ -1,5 +1,5 @@
+using AssetManagement.Web.Models;
 using AssetManagement.Web.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -27,13 +27,63 @@ namespace AssetManagement.Web.Controllers
             try
             {
                 var assets = await _assetService.GetAssetsAsync(token);
-                return View("/Views/Asset/Index.cshtml",assets);
+                return View("/Views/Asset/Index.cshtml", assets);
             }
             catch (HttpRequestException ex)
             {
                 _logger.LogError(ex, "Error fetching assets from API.");
                 return View("Error");
             }
+        }
+
+        // GET: Asset/Create
+        // This method displays the form to create a new asset.
+        public IActionResult Create()
+        {
+            // First, check if the user is logged in.
+            var token = HttpContext.Session.GetString("JWToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                // If not, redirect them to the login page.
+                return RedirectToAction("Login", "Account");
+            }
+
+            // Otherwise, show the Create view.
+            return View();
+        }
+
+        // POST: Asset/Create
+        // This method is called when the user submits the form.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(AssetViewModel model)
+        {
+            var token = HttpContext.Session.GetString("JWToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    // Call the service to create the new asset via the API.
+                    // Note: You will need to create this 'CreateAssetAsync' method in your IAssetService and AssetService.
+                    // await _assetService.CreateAssetAsync(model, token);
+
+                    // After successfully creating, redirect back to the list of assets.
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "An error occurred while creating the asset.");
+                    ModelState.AddModelError(string.Empty, "An error occurred while creating the asset.");
+                }
+            }
+
+            // If the model is not valid, return to the form with the validation errors.
+            return View(model);
         }
     }
 }
