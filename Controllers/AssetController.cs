@@ -1,6 +1,7 @@
 using AssetManagement.Web.Models;
 using AssetManagement.Web.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Threading.Tasks;
 
 namespace AssetManagement.Web.Controllers
@@ -48,8 +49,21 @@ namespace AssetManagement.Web.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
-            // Otherwise, show the Create view.
-            return View();
+            // Create a new view model to hold the data for the form.
+            var viewModel = new AssetViewModel
+            {
+                // Initialize the list for category options.
+                CategoryOptions = new List<SelectListItem>
+                {
+                    new SelectListItem { Value = "IT Equipment", Text = "IT Equipment" },
+                    new SelectListItem { Value = "Furniture", Text = "Furniture" }
+                },
+                // Initialize the subcategory options list as empty. It will be populated by JavaScript.
+                SubcategoryOptions = new List<SelectListItem>()
+            };
+
+            // Pass the view model to the view.
+            return View(viewModel);
         }
 
         // POST: Asset/Create
@@ -82,7 +96,14 @@ namespace AssetManagement.Web.Controllers
                 }
             }
 
-            // If the model is not valid, return to the form with the validation errors.
+            // If the model is not valid, repopulate the dropdowns and return to the form
+            model.CategoryOptions = new List<SelectListItem>
+            {
+                new SelectListItem { Value = "IT Equipment", Text = "IT Equipment" },
+                new SelectListItem { Value = "Furniture", Text = "Furniture" }
+            };
+            model.SubcategoryOptions = new List<SelectListItem>(); // Repopulate if necessary
+
             return View(model);
         }
     }

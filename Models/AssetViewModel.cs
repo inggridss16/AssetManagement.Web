@@ -23,6 +23,10 @@ namespace AssetManagement.Web.Models
         [Required]
         public string Subcategory { get; set; }
 
+
+        // This list will hold the options for the 'Category' dropdown list.
+        public List<SelectListItem>? CategoryOptions { get; set; }
+
         // This list will hold the options for the dropdown list.
         public List<SelectListItem>? SubcategoryOptions { get; set; }
     }
