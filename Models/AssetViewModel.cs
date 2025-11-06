@@ -14,20 +14,23 @@ namespace AssetManagement.Web.Models
         [Required]
         public string Category { get; set; }
 
+        [Display(Name = "Subcategory")]
+        [Required]
+        public string Subcategory { get; set; }
+
         public string? Status { get; set; }
 
         [Required]
         public string Description { get; set; }
 
-        [Display(Name = "Subcategory")]
+        [Display(Name = "Responsible Person")]
         [Required]
-        public string Subcategory { get; set; }
+        public long ResponsiblePersonId { get; set; }
 
-
-        // This list will hold the options for the 'Category' dropdown list.
-        public List<SelectListItem>? CategoryOptions { get; set; }
 
         // This list will hold the options for the dropdown list.
+        public List<SelectListItem>? CategoryOptions { get; set; }
         public List<SelectListItem>? SubcategoryOptions { get; set; }
+        public List<SelectListItem>? ResponsiblePersonOptions { get; set; }
     }
 }

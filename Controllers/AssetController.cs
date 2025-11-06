@@ -39,7 +39,7 @@ namespace AssetManagement.Web.Controllers
 
         // GET: Asset/Create
         // This method displays the form to create a new asset.
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
             // First, check if the user is logged in.
             var token = HttpContext.Session.GetString("JWToken");
@@ -48,6 +48,14 @@ namespace AssetManagement.Web.Controllers
                 // If not, redirect them to the login page.
                 return RedirectToAction("Login", "Account");
             }
+
+            // Fetch users for the 'Responsible Person' dropdown.
+            var users = await _assetService.GetUsersAsync(token);
+            var responsiblePersonOptions = users.Select(u => new SelectListItem
+            {
+                Value = u.Id.ToString(),
+                Text = u.Name
+            }).ToList();
 
             // Create a new view model to hold the data for the form.
             var viewModel = new AssetViewModel
@@ -59,7 +67,9 @@ namespace AssetManagement.Web.Controllers
                     new SelectListItem { Value = "Furniture", Text = "Furniture" }
                 },
                 // Initialize the subcategory options list as empty. It will be populated by JavaScript.
-                SubcategoryOptions = new List<SelectListItem>()
+                SubcategoryOptions = new List<SelectListItem>(),
+                // Populate the responsible person options.
+                ResponsiblePersonOptions = responsiblePersonOptions
             };
 
             // Pass the view model to the view.
@@ -83,8 +93,7 @@ namespace AssetManagement.Web.Controllers
                 try
                 {
                     // Call the service to create the new asset via the API.
-                    // Note: You will need to create this 'CreateAssetAsync' method in your IAssetService and AssetService.
-                    // await _assetService.CreateAssetAsync(model, token);
+                    await _assetService.CreateAssetAsync(model, token);
 
                     // After successfully creating, redirect back to the list of assets.
                     return RedirectToAction(nameof(Index));
@@ -97,6 +106,13 @@ namespace AssetManagement.Web.Controllers
             }
 
             // If the model is not valid, repopulate the dropdowns and return to the form
+            var users = await _assetService.GetUsersAsync(token);
+            model.ResponsiblePersonOptions = users.Select(u => new SelectListItem
+            {
+                Value = u.Id.ToString(),
+                Text = u.Name
+            }).ToList();
+
             model.CategoryOptions = new List<SelectListItem>
             {
                 new SelectListItem { Value = "IT Equipment", Text = "IT Equipment" },
