@@ -1,16 +1,17 @@
 ﻿@model AssetManagement.Web.Models.AssetViewModel
 
 @{
-    ViewData["Title"] = "Create Asset";
+    ViewData["Title"] = "Edit Asset";
 }
 
-<h1>Create Asset</h1>
-
+<h1>Edit Asset</h1>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Edit">
+            @* --- Your form fields are unchanged here --- *@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
 
             <div class="form-group mb-3">
                 <label asp-for="AssetName" class="control-label"></label>
@@ -48,15 +49,14 @@
                 <span asp-validation-for="ResponsiblePersonId" class="text-danger"></span>
             </div>
 
-            @* The Status will likely be set by the API by default, so it might not be needed here *@
-            @* <div class="form-group mb-3">
+            <div class="form-group mb-3">
                 <label asp-for="Status" class="control-label"></label>
                 <input asp-for="Status" class="form-control" />
                 <span asp-validation-for="Status" class="text-danger"></span>
-            </div> *@
+            </div>
 
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Save" class="btn btn-primary" />
                 <a asp-action="Index" class="btn btn-secondary">Back to List</a>
             </div>
         </form>
@@ -67,6 +67,18 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-
     <script src="~/js/asset-form.js" asp-append-version="true"></script>
+    <script>
+        $(document).ready(function () {
+            var initialCategory = "@Model.Category";
+            var initialSubcategory = "@Model.Subcategory";
+
+            // Step 1: Manually populate the subcategory dropdown based on the initial category.
+            // This ensures the options exist before we try to set the value.
+            updateSubcategoryDropdown(initialCategory, $("#subcategoryDropdown"));
+
+            // Step 2: Now that the options are guaranteed to be in the DOM, set the selected value.
+            $("#subcategoryDropdown").val(initialSubcategory);
+        });
+    </script>
 }

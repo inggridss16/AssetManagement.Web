@@ -53,5 +53,22 @@ namespace AssetManagement.Web.Services
             var response = await _httpClient.PostAsJsonAsync("/api/Assets", assetToCreate);
             response.EnsureSuccessStatusCode();
         }
+
+        public async Task<AssetViewModel> GetAssetByIdAsync(string id, string token)
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var response = await _httpClient.GetAsync($"/api/Assets/{id}");
+            response.EnsureSuccessStatusCode();
+
+            var asset = await response.Content.ReadFromJsonAsync<AssetViewModel>();
+            return asset;
+        }
+
+        public async Task UpdateAssetAsync(AssetViewModel model, string token)
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var response = await _httpClient.PutAsJsonAsync($"/api/Assets/{model.Id}", model);
+            response.EnsureSuccessStatusCode();
+        }
     }
 }

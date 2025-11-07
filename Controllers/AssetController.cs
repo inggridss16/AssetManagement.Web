@@ -2,6 +2,10 @@ using AssetManagement.Web.Models;
 using AssetManagement.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace AssetManagement.Web.Controllers
@@ -38,18 +42,14 @@ namespace AssetManagement.Web.Controllers
         }
 
         // GET: Asset/Create
-        // This method displays the form to create a new asset.
         public async Task<IActionResult> Create()
         {
-            // First, check if the user is logged in.
             var token = HttpContext.Session.GetString("JWToken");
             if (string.IsNullOrEmpty(token))
             {
-                // If not, redirect them to the login page.
                 return RedirectToAction("Login", "Account");
             }
 
-            // Fetch users for the 'Responsible Person' dropdown.
             var users = await _assetService.GetUsersAsync(token);
             var responsiblePersonOptions = users.Select(u => new SelectListItem
             {
@@ -57,27 +57,21 @@ namespace AssetManagement.Web.Controllers
                 Text = u.Name
             }).ToList();
 
-            // Create a new view model to hold the data for the form.
             var viewModel = new AssetViewModel
             {
-                // Initialize the list for category options.
                 CategoryOptions = new List<SelectListItem>
                 {
                     new SelectListItem { Value = "IT Equipment", Text = "IT Equipment" },
                     new SelectListItem { Value = "Furniture", Text = "Furniture" }
                 },
-                // Initialize the subcategory options list as empty. It will be populated by JavaScript.
                 SubcategoryOptions = new List<SelectListItem>(),
-                // Populate the responsible person options.
                 ResponsiblePersonOptions = responsiblePersonOptions
             };
 
-            // Pass the view model to the view.
             return View(viewModel);
         }
 
         // POST: Asset/Create
-        // This method is called when the user submits the form.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(AssetViewModel model)
@@ -92,10 +86,7 @@ namespace AssetManagement.Web.Controllers
             {
                 try
                 {
-                    // Call the service to create the new asset via the API.
                     await _assetService.CreateAssetAsync(model, token);
-
-                    // After successfully creating, redirect back to the list of assets.
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
@@ -105,7 +96,6 @@ namespace AssetManagement.Web.Controllers
                 }
             }
 
-            // If the model is not valid, repopulate the dropdowns and return to the form
             var users = await _assetService.GetUsersAsync(token);
             model.ResponsiblePersonOptions = users.Select(u => new SelectListItem
             {
@@ -118,8 +108,112 @@ namespace AssetManagement.Web.Controllers
                 new SelectListItem { Value = "IT Equipment", Text = "IT Equipment" },
                 new SelectListItem { Value = "Furniture", Text = "Furniture" }
             };
-            model.SubcategoryOptions = new List<SelectListItem>(); // Repopulate if necessary
+            model.SubcategoryOptions = new List<SelectListItem>();
 
+            return View(model);
+        }
+
+        // GET: Asset/Edit/5
+        public async Task<IActionResult> Edit(string id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var token = HttpContext.Session.GetString("JWToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            try
+            {
+                var asset = await _assetService.GetAssetByIdAsync(id, token);
+                if (asset == null)
+                {
+                    return NotFound();
+                }
+
+                var users = await _assetService.GetUsersAsync(token);
+                asset.ResponsiblePersonOptions = users.Select(u => new SelectListItem
+                {
+                    Value = u.Id.ToString(),
+                    Text = u.Name,
+                    Selected = u.Id == asset.ResponsiblePersonId
+                }).ToList();
+
+                asset.CategoryOptions = new List<SelectListItem>
+                {
+                    new SelectListItem { Value = "IT Equipment", Text = "IT Equipment" },
+                    new SelectListItem { Value = "Furniture", Text = "Furniture" }
+                };
+
+                return View(asset);
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, "Error fetching asset with id {id} from API.", id);
+                return View("Error");
+            }
+        }
+
+        // POST: Asset/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(string id, AssetViewModel model)
+        {
+            if (id != model.Id)
+            {
+                return NotFound();
+            }
+
+            var token = HttpContext.Session.GetString("JWToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    await _assetService.UpdateAssetAsync(model, token);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "An error occurred while updating the asset with id {id}.", id);
+                    ModelState.AddModelError(string.Empty, "An error occurred while updating the asset.");
+
+                    var users = await _assetService.GetUsersAsync(token);
+                    model.ResponsiblePersonOptions = users.Select(u => new SelectListItem
+                    {
+                        Value = u.Id.ToString(),
+                        Text = u.Name
+                    }).ToList();
+                    model.CategoryOptions = new List<SelectListItem>
+                    {
+                        new SelectListItem { Value = "IT Equipment", Text = "IT Equipment" },
+                        new SelectListItem { Value = "Furniture", Text = "Furniture" }
+                    };
+                    model.SubcategoryOptions = new List<SelectListItem>();
+                    return View(model);
+                }
+                return RedirectToAction(nameof(Index));
+            }
+
+            var users2 = await _assetService.GetUsersAsync(token);
+            model.ResponsiblePersonOptions = users2.Select(u => new SelectListItem
+            {
+                Value = u.Id.ToString(),
+                Text = u.Name
+            }).ToList();
+            model.CategoryOptions = new List<SelectListItem>
+            {
+                new SelectListItem { Value = "IT Equipment", Text = "IT Equipment" },
+                new SelectListItem { Value = "Furniture", Text = "Furniture" }
+            };
+            model.SubcategoryOptions = new List<SelectListItem>();
             return View(model);
         }
     }
