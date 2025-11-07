@@ -135,6 +135,8 @@ namespace AssetManagement.Web.Controllers
                     return NotFound();
                 }
 
+                asset.MaintenanceRecords = await _assetService.GetMaintenanceRecordsByAssetIdAsync(id, token);
+
                 var users = await _assetService.GetUsersAsync(token);
                 asset.ResponsiblePersonOptions = users.Select(u => new SelectListItem
                 {

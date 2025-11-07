@@ -77,8 +77,46 @@
     <div class="tab-pane fade" id="maintenance" role="tabpanel" aria-labelledby="maintenance-tab">
         <div class="mt-3">
             <h4>Maintenance Records</h4>
-            <p>This area will display maintenance records for the asset.</p>
-            <!-- Maintenance records content will go here -->
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <a class="btn btn-primary" asp-action="">Add</a>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Cost</th>
+                        <th>Vendor</th>
+                        <th>Comments</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.MaintenanceRecords != null && Model.MaintenanceRecords.Any())
+                    {
+                        foreach (var record in Model.MaintenanceRecords)
+                        {
+                            <tr>
+                                <td>@record.MaintenanceDate.ToString("yyyy-MM-dd")</td>
+                                <td>@record.MaintenanceType</td>
+                                <td>@record.MaintenanceCost.ToString("C")</td>
+                                <td>@record.Vendor</td>
+                                <td>@record.Comments</td>
+                                <td>
+                                    <a href="#" class="btn btn-sm btn-warning">Edit</a>
+                                    <a href="#" class="btn btn-sm btn-danger">Delete</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center">No maintenance records found.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

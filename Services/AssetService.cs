@@ -16,6 +16,16 @@ namespace AssetManagement.Web.Services
             _httpClient = httpClient;
         }
 
+        public async Task<IEnumerable<MaintenanceRecordViewModel>> GetMaintenanceRecordsByAssetIdAsync(string assetId, string token)
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var response = await _httpClient.GetAsync($"/api/assets/{assetId}/maintenance");
+            response.EnsureSuccessStatusCode();
+
+            var records = await response.Content.ReadFromJsonAsync<IEnumerable<MaintenanceRecordViewModel>>();
+            return records ?? new List<MaintenanceRecordViewModel>();
+        }
+
         public async Task<IEnumerable<AssetViewModel>> GetAssetsAsync(string token)
         {
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
