@@ -6,60 +6,80 @@
 
 <h1>Edit Asset</h1>
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            @* --- Your form fields are unchanged here --- *@
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
 
-            <div class="form-group mb-3">
-                <label asp-for="AssetName" class="control-label"></label>
-                <input asp-for="AssetName" class="form-control" />
-                <span asp-validation-for="AssetName" class="text-danger"></span>
-            </div>
+<ul class="nav nav-tabs" id="assetTab" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="asset-details-tab" data-bs-toggle="tab" data-bs-target="#asset-details" type="button" role="tab" aria-controls="asset-details" aria-selected="true">Asset</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="maintenance-tab" data-bs-toggle="tab" data-bs-target="#maintenance" type="button" role="tab" aria-controls="maintenance" aria-selected="false">Maintenance</button>
+    </li>
+</ul>
 
-            <div class="form-group mb-3">
-                <label asp-for="Description" class="control-label"></label>
-                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
+<div class="tab-content" id="assetTabContent">
+    <div class="tab-pane fade show active" id="asset-details" role="tabpanel" aria-labelledby="asset-details-tab">
+        <div class="row mt-3">
+            <div class="col-md-4">
+                <form asp-action="Edit">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="Id" />
 
-            <div class="form-group mb-3">
-                <label asp-for="Category" class="control-label"></label>
-                <select asp-for="Category" asp-items="Model.CategoryOptions" class="form-control" id="categoryDropdown">
-                    <option value="">-- Select Category --</option>
-                </select>
-                <span asp-validation-for="Category" class="text-danger"></span>
-            </div>
+                    <div class="form-group mb-3">
+                        <label asp-for="AssetName" class="control-label"></label>
+                        <input asp-for="AssetName" class="form-control" />
+                        <span asp-validation-for="AssetName" class="text-danger"></span>
+                    </div>
 
-            <div class="form-group mb-3">
-                <label asp-for="Subcategory" class="control-label"></label>
-                <select asp-for="Subcategory" class="form-control" id="subcategoryDropdown">
-                    <option value="">-- Select Category First --</option>
-                </select>
-                <span asp-validation-for="Subcategory" class="text-danger"></span>
-            </div>
+                    <div class="form-group mb-3">
+                        <label asp-for="Description" class="control-label"></label>
+                        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
 
-            <div class="form-group mb-3">
-                <label asp-for="ResponsiblePersonId" class="control-label"></label>
-                <select asp-for="ResponsiblePersonId" asp-items="Model.ResponsiblePersonOptions" class="form-control">
-                    <option value="">-- Select Responsible Person --</option>
-                </select>
-                <span asp-validation-for="ResponsiblePersonId" class="text-danger"></span>
-            </div>
+                    <div class="form-group mb-3">
+                        <label asp-for="Category" class="control-label"></label>
+                        <select asp-for="Category" asp-items="Model.CategoryOptions" class="form-control" id="categoryDropdown">
+                            <option value="">-- Select Category --</option>
+                        </select>
+                        <span asp-validation-for="Category" class="text-danger"></span>
+                    </div>
 
-            <div class="form-group mb-3">
-                <label asp-for="Status" class="control-label"></label>
-                <input asp-for="Status" class="form-control" />
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
+                    <div class="form-group mb-3">
+                        <label asp-for="Subcategory" class="control-label"></label>
+                        <select asp-for="Subcategory" class="form-control" id="subcategoryDropdown">
+                            <option value="">-- Select Category First --</option>
+                        </select>
+                        <span asp-validation-for="Subcategory" class="text-danger"></span>
+                    </div>
 
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                    <div class="form-group mb-3">
+                        <label asp-for="ResponsiblePersonId" class="control-label"></label>
+                        <select asp-for="ResponsiblePersonId" asp-items="Model.ResponsiblePersonOptions" class="form-control">
+                            <option value="">-- Select Responsible Person --</option>
+                        </select>
+                        <span asp-validation-for="ResponsiblePersonId" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="Status" class="control-label"></label>
+                        <input asp-for="Status" class="form-control" />
+                        <span asp-validation-for="Status" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="submit" value="Save" class="btn btn-primary" />
+                        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                    </div>
+                </form>
             </div>
-        </form>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="maintenance" role="tabpanel" aria-labelledby="maintenance-tab">
+        <div class="mt-3">
+            <h4>Maintenance Records</h4>
+            <p>This area will display maintenance records for the asset.</p>
+            <!-- Maintenance records content will go here -->
+        </div>
     </div>
 </div>
 
@@ -70,15 +90,21 @@
     <script src="~/js/asset-form.js" asp-append-version="true"></script>
     <script>
         $(document).ready(function () {
+            // Get initial values from the Model
             var initialCategory = "@Model.Category";
             var initialSubcategory = "@Model.Subcategory";
 
-            // Step 1: Manually populate the subcategory dropdown based on the initial category.
-            // This ensures the options exist before we try to set the value.
+            // Set the initial value for the category dropdown
+            $("#categoryDropdown").val(initialCategory);
+
+            // Populate the subcategory dropdown based on the initial category
             updateSubcategoryDropdown(initialCategory, $("#subcategoryDropdown"));
 
-            // Step 2: Now that the options are guaranteed to be in the DOM, set the selected value.
+            // Set the initial value for the subcategory dropdown
             $("#subcategoryDropdown").val(initialSubcategory);
+
+            // Manually trigger the change event to run the initial logic from asset-form.js
+            $("#subcategoryDropdown").trigger("change");
         });
     </script>
 }
