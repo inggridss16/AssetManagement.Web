@@ -17,6 +17,10 @@ builder.Services.AddHttpClient<IAssetService, AssetService>(client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["ApiBaseUrl"]!);
 });
+builder.Services.AddHttpClient<IMaintenanceService, MaintenanceService>(client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["ApiBaseUrl"]!);
+});
 
 // Add HttpContextAccessor to access session state
 builder.Services.AddHttpContextAccessor();

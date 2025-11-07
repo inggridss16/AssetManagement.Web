@@ -78,7 +78,7 @@
         <div class="mt-3">
             <h4>Maintenance Records</h4>
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <a class="btn btn-primary" asp-action="">Add</a>
+                <a class="btn btn-primary" asp-controller="Maintenance" asp-action="Create" asp-route-assetId="@Model.Id">Add</a>
             </div>
             <table class="table">
                 <thead>
