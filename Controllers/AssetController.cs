@@ -243,5 +243,64 @@ namespace AssetManagement.Web.Controllers
                 return RedirectToAction(nameof(Index));
             }
         }
+
+        // GET: Asset/Delete/5
+        public async Task<IActionResult> Delete(string id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var token = HttpContext.Session.GetString("JWToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            try
+            {
+                var asset = await _assetService.GetAssetByIdAsync(id, token);
+                if (asset == null)
+                {
+                    return NotFound();
+                }
+
+                // Fetch and add maintenance records to the view model
+                asset.MaintenanceRecords = await _assetService.GetMaintenanceRecordsByAssetIdAsync(id, token);
+
+                return View(asset);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching asset for deletion with id {id}.", id);
+                return View("Error");
+            }
+        }
+
+        // POST: Asset/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(string id)
+        {
+            var token = HttpContext.Session.GetString("JWToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            try
+            {
+                await _assetService.DeleteAssetAsync(id, token);
+                TempData["SuccessMessage"] = "Asset deleted successfully.";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting asset with id {id}.", id);
+                TempData["ErrorMessage"] = "An error occurred while deleting the asset.";
+                return RedirectToAction(nameof(Index));
+            }
+        }
     }
 }

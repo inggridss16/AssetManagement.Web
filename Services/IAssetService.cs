@@ -13,5 +13,6 @@ namespace AssetManagement.Web.Services
         Task UpdateAssetAsync(AssetViewModel asset, string token);
         Task<IEnumerable<MaintenanceRecordViewModel>> GetMaintenanceRecordsByAssetIdAsync(string assetId, string token);
         Task AskForReviewAsync(string id, string token);
+        Task DeleteAssetAsync(string id, string token);
     }
 }

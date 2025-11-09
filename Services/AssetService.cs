@@ -87,5 +87,12 @@ namespace AssetManagement.Web.Services
             var response = await _httpClient.PostAsync($"/api/Assets/AskForReview/{id}", null);
             response.EnsureSuccessStatusCode();
         }
+
+        public async Task DeleteAssetAsync(string id, string token)
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var response = await _httpClient.DeleteAsync($"/api/Assets/{id}");
+            response.EnsureSuccessStatusCode();
+        }
     }
 }
