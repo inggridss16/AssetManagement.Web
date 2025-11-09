@@ -34,6 +34,9 @@ namespace AssetManagement.Web.Models
         [Required]
         public long ResponsiblePersonId { get; set; }
 
+        [Display(Name = "Total Value")]
+        public decimal AssetValue { get; set; }
+
         public List<SelectListItem>? CategoryOptions { get; set; }
         public List<SelectListItem>? SubcategoryOptions { get; set; }
         public List<SelectListItem>? ResponsiblePersonOptions { get; set; }
