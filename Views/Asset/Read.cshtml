@@ -78,6 +78,13 @@
                         <span asp-validation-for="Status" class="text-danger"></span>
                     </div>
 
+                    <div class="form-group mb-3">
+                        <label asp-for="AssetValue" class="control-label"></label>
+                        <input asp-for="AssetValue" class="form-control" disabled />
+                        <span asp-validation-for="AssetValue" class="text-danger"></span>
+                    </div>
+
+
                     <div class="form-group">
                         <a asp-action="Index" class="btn btn-secondary">Back to List</a>
                     </div>
