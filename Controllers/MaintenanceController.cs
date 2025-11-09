@@ -55,5 +55,56 @@ namespace AssetManagement.Web.Controllers
             }
             return View(model);
         }
+        // GET: Maintenance/Edit/5
+        public async Task<IActionResult> Edit(string assetId, long id)
+        {
+            var token = HttpContext.Session.GetString("JWToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            try
+            {
+                var model = await _maintenanceService.GetMaintenanceRecordByIdAsync(assetId, id, token);
+                if (model == null)
+                {
+                    return NotFound();
+                }
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching maintenance record with id {id}.", id);
+                return View("Error");
+            }
+        }
+
+        // POST: Maintenance/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(MaintenanceRecordViewModel model)
+        {
+            var token = HttpContext.Session.GetString("JWToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    await _maintenanceService.UpdateMaintenanceRecordAsync(model.LinkedAssetId, model.Id, model, token);
+                    return RedirectToAction("Edit", "Asset", new { id = model.LinkedAssetId });
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "An error occurred while updating the maintenance record.");
+                    ModelState.AddModelError(string.Empty, "An error occurred while updating the maintenance record.");
+                }
+            }
+            return View(model);
+        }
     }
 }

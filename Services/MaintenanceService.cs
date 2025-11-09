@@ -32,5 +32,30 @@ namespace AssetManagement.Web.Services
             var response = await _httpClient.PostAsJsonAsync($"/api/assets/{assetId}/maintenance", maintenanceRecordToCreate);
             response.EnsureSuccessStatusCode();
         }
+        public async Task<MaintenanceRecordViewModel> GetMaintenanceRecordByIdAsync(string assetId, long id, string token)
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var response = await _httpClient.GetAsync($"/api/assets/{assetId}/maintenance/{id}");
+            response.EnsureSuccessStatusCode();
+
+            var record = await response.Content.ReadFromJsonAsync<MaintenanceRecordViewModel>();
+            return record;
+        }
+        public async Task UpdateMaintenanceRecordAsync(string assetId, long id, MaintenanceRecordViewModel model, string token)
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var maintenanceRecordToUpdate = new
+            {
+                model.MaintenanceCost,
+                model.MaintenanceType,
+                model.Comments,
+                model.Vendor,
+                model.MaintenanceDate
+            };
+
+            var response = await _httpClient.PutAsJsonAsync($"/api/assets/{assetId}/maintenance/{id}", maintenanceRecordToUpdate);
+            response.EnsureSuccessStatusCode();
+        }
     }
 }
