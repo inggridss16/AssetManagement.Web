@@ -7,5 +7,6 @@ namespace AssetManagement.Web.Services
     public interface IApprovalService
     {
         Task<IEnumerable<AssetViewModel>> GetPendingApprovalsAsync(string token);
+        Task SubmitApprovalAsync(ApprovalDto approval, string token);
     }
 }

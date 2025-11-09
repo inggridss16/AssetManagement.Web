@@ -25,5 +25,12 @@ namespace AssetManagement.Web.Services
             var assets = await response.Content.ReadFromJsonAsync<IEnumerable<AssetViewModel>>();
             return assets ?? new List<AssetViewModel>();
         }
+
+        public async Task SubmitApprovalAsync(ApprovalDto approval, string token)
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var response = await _httpClient.PostAsJsonAsync("/api/workflow/approve", approval);
+            response.EnsureSuccessStatusCode();
+        }
     }
 }

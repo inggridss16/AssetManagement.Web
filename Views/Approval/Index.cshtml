@@ -6,6 +6,13 @@
 
 <h1>Pending Approvals</h1>
 
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
 <table class="table">
     <thead>
         <tr>
@@ -27,7 +34,7 @@
                     <td>@item.Category</td>
                     <td>@item.Description</td>
                     <td>
-                        <a asp-controller="Asset" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Review</a>
+                        <a asp-controller="Approval" asp-action="Review" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Review</a>
                     </td>
                 </tr>
             }
