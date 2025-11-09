@@ -1,7 +1,9 @@
 ﻿@model IEnumerable<AssetManagement.Web.Models.AssetViewModel>
+@inject IHttpContextAccessor HttpContextAccessor
 
 @{
     ViewData["Title"] = "Asset List";
+    var userRole = HttpContextAccessor.HttpContext?.Session.GetString("UserRole");
 }
 
 <h1>Asset List</h1>
@@ -42,7 +44,15 @@
                                 <button type="submit" class="btn btn-sm btn-info">Ask for Review</button>
                             </form>
                         }
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+
+                        @if (userRole?.ToLower() == "manager")
+                        {
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+                        }
+                        else
+                        {
+                            <a class="btn btn-sm btn-danger disabled" title="You do not have permission to delete">Delete</a>
+                        }
                     </td>
                     <td>@item.Id</td>
                     <td>@item.AssetName</td>
@@ -54,7 +64,7 @@
         else
         {
             <tr>
-                <td colspan="4" class="text-center">No assets found.</td>
+                <td colspan="5" class="text-center">No assets found.</td>
             </tr>
         }
     </tbody>
