@@ -1,5 +1,7 @@
 ﻿@model IEnumerable<AssetManagement.Web.Models.AssetViewModel>
 @inject IHttpContextAccessor HttpContextAccessor
+@using System.IdentityModel.Tokens.Jwt
+@using System.Security.Claims
 
 @{
     ViewData["Title"] = "Asset List";
@@ -8,6 +10,16 @@
 
     // A user in the IT Department (assumed ID '2') with the role 'user' cannot delete.
     var cannotDelete = userRole?.ToLower() == "user" && departmentId == "2";
+
+    // Get the current user's ID from the JWT token in the session
+    var token = HttpContextAccessor.HttpContext?.Session.GetString("JWToken");
+    string currentUserId = string.Empty;
+    if (!string.IsNullOrEmpty(token))
+    {
+        var handler = new JwtSecurityTokenHandler();
+        var jwtToken = handler.ReadJwtToken(token);
+        currentUserId = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "nameid")?.Value;
+    }
 }
 
 <h1>Asset List</h1>
@@ -53,7 +65,8 @@
                         else
                         {
                             <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
-                            @if (item.Status == "New" && userRole?.ToLower() != "manager")
+
+                            @if (item.Status == "New" && !string.IsNullOrEmpty(currentUserId) && currentUserId == item.RequesterId.ToString())
                             {
                                 <form asp-action="AskForReview" asp-route-id="@item.Id" method="post" style="display: inline;">
                                     <button type="submit" class="btn btn-sm btn-info">Ask for Review</button>
