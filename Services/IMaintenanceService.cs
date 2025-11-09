@@ -9,5 +9,6 @@ namespace AssetManagement.Web.Services
         Task AddMaintenanceRecordAsync(string assetId, MaintenanceRecordViewModel maintenanceRecord, string token);
         Task<MaintenanceRecordViewModel> GetMaintenanceRecordByIdAsync(string assetId, long id, string token);
         Task UpdateMaintenanceRecordAsync(string assetId, long id, MaintenanceRecordViewModel maintenanceRecord, string token);
+        Task DeleteMaintenanceRecordAsync(string assetId, long id, string token);
     }
 }

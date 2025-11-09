@@ -105,7 +105,7 @@
                                 <td>@record.Comments</td>
                                 <td>
                                     <a asp-controller="Maintenance" asp-action="Edit" asp-route-assetId="@Model.Id" asp-route-id="@record.Id" class="btn btn-sm btn-warning">Edit</a>
-                                    <a href="#" class="btn btn-sm btn-danger">Delete</a>
+                                    <a asp-controller="Maintenance" asp-action="Delete" asp-route-assetId="@Model.Id" asp-route-id="@record.Id" class="btn btn-sm btn-danger">Delete</a>
                                 </td>
                             </tr>
                         }
