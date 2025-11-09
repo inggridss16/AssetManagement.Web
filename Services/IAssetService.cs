@@ -14,5 +14,6 @@ namespace AssetManagement.Web.Services
         Task<IEnumerable<MaintenanceRecordViewModel>> GetMaintenanceRecordsByAssetIdAsync(string assetId, string token);
         Task AskForReviewAsync(string id, string token);
         Task DeleteAssetAsync(string id, string token);
+        Task<IEnumerable<TrxAssetApprovalViewModel>> GetApprovalLogsByAssetIdAsync(string assetId, string token);
     }
 }

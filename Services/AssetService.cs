@@ -94,5 +94,13 @@ namespace AssetManagement.Web.Services
             var response = await _httpClient.DeleteAsync($"/api/Assets/{id}");
             response.EnsureSuccessStatusCode();
         }
+        public async Task<IEnumerable<TrxAssetApprovalViewModel>> GetApprovalLogsByAssetIdAsync(string assetId, string token)
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            var response = await _httpClient.GetAsync($"/api/Assets/{assetId}/approval-logs");
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadFromJsonAsync<IEnumerable<TrxAssetApprovalViewModel>>() ?? new List<TrxAssetApprovalViewModel>();
+        }
     }
 }

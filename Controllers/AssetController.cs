@@ -137,6 +137,11 @@ namespace AssetManagement.Web.Controllers
 
                 asset.MaintenanceRecords = await _assetService.GetMaintenanceRecordsByAssetIdAsync(id, token);
 
+                if (asset.Status != "New")
+                {
+                    asset.ApprovalLogs = await _assetService.GetApprovalLogsByAssetIdAsync(id, token);
+                }
+
                 var users = await _assetService.GetUsersAsync(token);
                 asset.ResponsiblePersonOptions = users.Select(u => new SelectListItem
                 {
