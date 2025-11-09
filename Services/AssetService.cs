@@ -80,5 +80,12 @@ namespace AssetManagement.Web.Services
             var response = await _httpClient.PutAsJsonAsync($"/api/Assets/{model.Id}", model);
             response.EnsureSuccessStatusCode();
         }
+
+        public async Task AskForReviewAsync(string id, string token)
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var response = await _httpClient.PostAsync($"/api/Assets/AskForReview/{id}", null);
+            response.EnsureSuccessStatusCode();
+        }
     }
 }

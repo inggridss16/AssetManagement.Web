@@ -218,5 +218,29 @@ namespace AssetManagement.Web.Controllers
             model.SubcategoryOptions = new List<SelectListItem>();
             return View(model);
         }
+
+        // POST: Asset/AskForReview/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AskForReview(string id)
+        {
+            var token = HttpContext.Session.GetString("JWToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            try
+            {
+                await _assetService.AskForReviewAsync(id, token);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while asking for review for asset with id {id}.", id);
+                TempData["ErrorMessage"] = "An error occurred while submitting the asset for review.";
+                return RedirectToAction(nameof(Index));
+            }
+        }
     }
 }

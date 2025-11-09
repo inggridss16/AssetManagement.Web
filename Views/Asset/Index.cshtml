@@ -7,6 +7,13 @@
 <h1>Asset List</h1>
 
 
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
     <a class="btn btn-primary" asp-action="Create">Create</a>
 </div>
@@ -29,6 +36,12 @@
                 <tr>
                     <td>
                         <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
+                        @if (item.Status == "New")
+                        {
+                            <form asp-action="AskForReview" asp-route-id="@item.Id" method="post" style="display: inline;">
+                                <button type="submit" class="btn btn-sm btn-info">Ask for Review</button>
+                            </form>
+                        }
                         <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
                     </td>
                     <td>@item.Id</td>
