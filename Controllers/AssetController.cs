@@ -232,6 +232,7 @@ namespace AssetManagement.Web.Controllers
 
             try
             {
+                // Calls the service to update the asset's status
                 await _assetService.AskForReviewAsync(id, token);
                 return RedirectToAction(nameof(Index));
             }

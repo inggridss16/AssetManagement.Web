@@ -2,6 +2,8 @@ using AssetManagement.Web.Models;
 using AssetManagement.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 
 namespace AssetManagement.Web.Controllers
 {
@@ -38,6 +40,13 @@ namespace AssetManagement.Web.Controllers
                     {
                         // Upon successful login, store the token in the session.
                         HttpContext.Session.SetString("JWToken", token);
+
+                        // Decode the token to get user claims
+                        var handler = new JwtSecurityTokenHandler();
+                        var jwtToken = handler.ReadJwtToken(token);
+                        var userRole = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "role")?.Value;
+                        
+                        HttpContext.Session.SetString("UserRole", userRole ?? "");
 
                         // Redirect to the Asset List page
                         return RedirectToAction("Index", "Asset");

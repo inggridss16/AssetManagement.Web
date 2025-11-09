@@ -1,0 +1,42 @@
+﻿@model IEnumerable<AssetManagement.Web.Models.AssetViewModel>
+
+@{
+    ViewData["Title"] = "Pending Approvals";
+}
+
+<h1>Pending Approvals</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Asset ID</th>
+            <th>Asset Name</th>
+            <th>Category</th>
+            <th>Description</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.AssetName</td>
+                    <td>@item.Category</td>
+                    <td>@item.Description</td>
+                    <td>
+                        <a asp-controller="Asset" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Review</a>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="5" class="text-center">No assets are currently pending your approval.</td>
+            </tr>
+        }
+    </tbody>
+</table>
