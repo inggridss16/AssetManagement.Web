@@ -4,10 +4,13 @@
 @{
     ViewData["Title"] = "Asset List";
     var userRole = HttpContextAccessor.HttpContext?.Session.GetString("UserRole");
+    var departmentId = HttpContextAccessor.HttpContext?.Session.GetString("DepartmentId");
+
+    // A user in the IT Department (assumed ID '2') with the role 'user' cannot delete.
+    var cannotDelete = userRole?.ToLower() == "user" && departmentId == "2";
 }
 
 <h1>Asset List</h1>
-
 
 @if (TempData["SuccessMessage"] != null)
 {
@@ -51,13 +54,13 @@
                             </form>
                         }
 
-                        @if (userRole?.ToLower() == "manager")
+                        @if (cannotDelete)
                         {
-                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+                            <a class="btn btn-sm btn-danger disabled" title="Users in the IT Department do not have permission to delete">Delete</a>
                         }
                         else
                         {
-                            <a class="btn btn-sm btn-danger disabled" title="You do not have permission to delete">Delete</a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
                         }
                     </td>
                     <td>@item.Id</td>

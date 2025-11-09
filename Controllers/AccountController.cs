@@ -45,8 +45,10 @@ namespace AssetManagement.Web.Controllers
                         var handler = new JwtSecurityTokenHandler();
                         var jwtToken = handler.ReadJwtToken(token);
                         var userRole = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "role")?.Value;
-                        
+                        var departmentId = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "DepartmentId")?.Value;
+
                         HttpContext.Session.SetString("UserRole", userRole ?? "");
+                        HttpContext.Session.SetString("DepartmentId", departmentId ?? "");
 
                         // Redirect to the Asset List page
                         return RedirectToAction("Index", "Asset");
