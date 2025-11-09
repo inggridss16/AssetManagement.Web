@@ -23,6 +23,11 @@ namespace AssetManagement.Web.Models
         [Required]
         public string Description { get; set; }
 
+        public long RequesterId { get; set; }
+
+        [Display(Name = "Requester")]
+        public string? RequesterName { get; set; }
+
         [Display(Name = "Responsible Person")]
         [Required]
         public long ResponsiblePersonId { get; set; }

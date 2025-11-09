@@ -46,21 +46,28 @@
             {
                 <tr>
                     <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
-                        @if (item.Status == "New")
+                        @if (item.Status == "Assigned" || item.Status == "Discarded")
                         {
-                            <form asp-action="AskForReview" asp-route-id="@item.Id" method="post" style="display: inline;">
-                                <button type="submit" class="btn btn-sm btn-info">Ask for Review</button>
-                            </form>
-                        }
-
-                        @if (cannotDelete)
-                        {
-                            <a class="btn btn-sm btn-danger disabled" title="Users in the IT Department do not have permission to delete">Delete</a>
+                            <a asp-action="View" asp-route-id="@item.Id" class="btn btn-sm btn-info">View</a>
                         }
                         else
                         {
-                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
+                            @if (item.Status == "New" && userRole?.ToLower() != "manager")
+                            {
+                                <form asp-action="AskForReview" asp-route-id="@item.Id" method="post" style="display: inline;">
+                                    <button type="submit" class="btn btn-sm btn-info">Ask for Review</button>
+                                </form>
+                            }
+
+                            @if (cannotDelete)
+                            {
+                                <a class="btn btn-sm btn-danger disabled" title="Users in the IT Department do not have permission to delete">Delete</a>
+                            }
+                            else
+                            {
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+                            }
                         }
                     </td>
                     <td>@item.Id</td>
