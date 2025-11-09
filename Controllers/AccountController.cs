@@ -50,6 +50,12 @@ namespace AssetManagement.Web.Controllers
                         HttpContext.Session.SetString("UserRole", userRole ?? "");
                         HttpContext.Session.SetString("DepartmentId", departmentId ?? "");
 
+                        // If the user is a manager, redirect to the approval page.
+                        if (userRole?.Equals("manager", StringComparison.OrdinalIgnoreCase) == true)
+                        {
+                            return RedirectToAction("Index", "Approval");
+                        }
+
                         // Redirect to the Asset List page
                         return RedirectToAction("Index", "Asset");
                     }
