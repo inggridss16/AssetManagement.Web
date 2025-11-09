@@ -1,0 +1,191 @@
+﻿@model AssetManagement.Web.Models.AssetViewModel
+
+@{
+    ViewData["Title"] = "Read Asset";
+    var isNotNew = Model.Status != "New";
+}
+
+<h1>View Asset</h1>
+<hr />
+
+<ul class="nav nav-tabs" id="assetTab" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="asset-details-tab" data-bs-toggle="tab" data-bs-target="#asset-details" type="button" role="tab" aria-controls="asset-details" aria-selected="true">Asset</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="maintenance-tab" data-bs-toggle="tab" data-bs-target="#maintenance" type="button" role="tab" aria-controls="maintenance" aria-selected="false">Maintenance</button>
+    </li>
+    @if (isNotNew)
+    {
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="approval-log-tab" data-bs-toggle="tab" data-bs-target="#approval-log" type="button" role="tab" aria-controls="approval-log" aria-selected="false">Approval Log</button>
+        </li>
+    }
+</ul>
+
+<div class="tab-content" id="assetTabContent">
+    <div class="tab-pane fade show active" id="asset-details" role="tabpanel" aria-labelledby="asset-details-tab">
+        <div class="row mt-3">
+            <div class="col-md-4">
+                <form asp-action="Edit">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="form-group mb-3">
+                        <label asp-for="AssetName" class="control-label"></label>
+                        <input asp-for="AssetName" class="form-control" readonly="@isNotNew" />
+                        <span asp-validation-for="AssetName" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="RequesterName" class="control-label"></label>
+                        <input asp-for="RequesterName" class="form-control" disabled />
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="Description" class="control-label"></label>
+                        <textarea asp-for="Description" class="form-control" rows="3" readonly="@isNotNew"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="Category" class="control-label"></label>
+                        <select asp-for="Category" asp-items="Model.CategoryOptions" class="form-control" id="categoryDropdown" disabled="@isNotNew">
+                            <option value="">-- Select Category --</option>
+                        </select>
+                        <span asp-validation-for="Category" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="Subcategory" class="control-label"></label>
+                        <select asp-for="Subcategory" class="form-control" id="subcategoryDropdown" disabled="@isNotNew">
+                            <option value="">-- Select Category First --</option>
+                        </select>
+                        <span asp-validation-for="Subcategory" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="ResponsiblePersonId" class="control-label"></label>
+                        <select asp-for="ResponsiblePersonId" asp-items="Model.ResponsiblePersonOptions" class="form-control" disabled="@isNotNew">
+                            <option value="">-- Select Responsible Person --</option>
+                        </select>
+                        <span asp-validation-for="ResponsiblePersonId" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="Status" class="control-label"></label>
+                        <input asp-for="Status" class="form-control" readonly />
+                        <span asp-validation-for="Status" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="maintenance" role="tabpanel" aria-labelledby="maintenance-tab">
+        <div class="mt-3">
+            <h4>Maintenance Records</h4>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Cost</th>
+                        <th>Vendor</th>
+                        <th>Comments</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (Model.MaintenanceRecords != null && Model.MaintenanceRecords.Any())
+                    {
+                        foreach (var record in Model.MaintenanceRecords)
+                        {
+                            <tr>
+                                <td>@record.MaintenanceDate.ToString("yyyy-MM-dd")</td>
+                                <td>@record.MaintenanceType</td>
+                                <td>@record.MaintenanceCost.ToString("C")</td>
+                                <td>@record.Vendor</td>
+                                <td>@record.Comments</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center">No maintenance records found.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    @if (isNotNew)
+    {
+        <div class="tab-pane fade" id="approval-log" role="tabpanel" aria-labelledby="approval-log-tab">
+            <div class="mt-3">
+                <h4>Approval Log</h4>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Approver</th>
+                            <th>Status</th>
+                            <th>Comments</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.ApprovalLogs != null && Model.ApprovalLogs.Any())
+                        {
+                            @foreach (var log in Model.ApprovalLogs)
+                            {
+                                <tr>
+                                    <td>@log.ApproverName</td>
+                                    <td>@log.Status</td>
+                                    <td>@log.Comments</td>
+                                    <td>@log.ApprovalDate?.ToString("yyyy-MM-dd HH:mm")</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="4" class="text-center">No approval history.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script src="~/js/asset-form.js" asp-append-version="true"></script>
+    <script>
+        $(document).ready(function () {
+            // Get initial values from the Model
+            var initialCategory = "@Model.Category";
+            var initialSubcategory = "@Model.Subcategory";
+
+            // Set the initial value for the category dropdown
+            $("#categoryDropdown").val(initialCategory);
+
+            // Populate the subcategory dropdown based on the initial category
+            updateSubcategoryDropdown(initialCategory, $("#subcategoryDropdown"));
+
+            // Set the initial value for the subcategory dropdown
+            $("#subcategoryDropdown").val(initialSubcategory);
+
+            // Manually trigger the change event to run the initial logic from asset-form.js
+            $("#subcategoryDropdown").trigger("change");
+        });
+    </script>
+}

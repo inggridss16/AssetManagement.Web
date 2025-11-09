@@ -164,6 +164,56 @@ namespace AssetManagement.Web.Controllers
                 return View("Error");
             }
         }
+        public async Task<IActionResult> Read(string id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var token = HttpContext.Session.GetString("JWToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            try
+            {
+                var asset = await _assetService.GetAssetByIdAsync(id, token);
+                if (asset == null)
+                {
+                    return NotFound();
+                }
+
+                asset.MaintenanceRecords = await _assetService.GetMaintenanceRecordsByAssetIdAsync(id, token);
+
+                if (asset.Status != "New")
+                {
+                    asset.ApprovalLogs = await _assetService.GetApprovalLogsByAssetIdAsync(id, token);
+                }
+
+                var users = await _assetService.GetUsersAsync(token);
+                asset.ResponsiblePersonOptions = users.Select(u => new SelectListItem
+                {
+                    Value = u.Id.ToString(),
+                    Text = u.Name,
+                    Selected = u.Id == asset.ResponsiblePersonId
+                }).ToList();
+
+                asset.CategoryOptions = new List<SelectListItem>
+                {
+                    new SelectListItem { Value = "IT Equipment", Text = "IT Equipment" },
+                    new SelectListItem { Value = "Furniture", Text = "Furniture" }
+                };
+
+                return View("Read", asset);
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, "Error fetching asset with id {id} for viewing.", id);
+                return View("Error");
+            }
+        }
 
         // POST: Asset/Edit/5
         [HttpPost]
